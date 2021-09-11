@@ -11,7 +11,6 @@ app.use(cors());
 app.use(express.json());
 
 
-
 app.get('/', (req, res) => {
     res.send("It's Working")
 })
@@ -22,7 +21,7 @@ client.connect(err => {
     const articleCollection = client.db("fourteenFortyMinutesNews").collection("articles");
     const adminCollection = client.db("fourteenFortyMinutesNews").collection("admins");
     
-
+//post method
 
     app.post('/addAnArticle', (req, res) => {
         const newArticle = req.body;
@@ -41,7 +40,6 @@ client.connect(err => {
             })
     })
 
-
     app.post('/isAdmin', (req, res) => {
         const email = req.body.email;
         console.log(email)
@@ -53,6 +51,7 @@ client.connect(err => {
     })
 
 
+//get method
 
     app.get('/articleDetails/:id',(req,res)=>{
         articleCollection.find({ _id:ObjectId(req.params.id) })
@@ -60,8 +59,7 @@ client.connect(err => {
             res.send(documents[0])
             console.log(err, documents)
       })
-      
-      })
+    })
 
 
     app.get('/articles', (req, res) => {
