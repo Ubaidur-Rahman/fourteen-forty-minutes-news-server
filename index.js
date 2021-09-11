@@ -8,7 +8,7 @@ const app = express()
 const port = process.env.PORT || 5055
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 
 
@@ -20,21 +20,39 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
 
     const articleCollection = client.db("fourteenFortyMinutesNews").collection("articles");
+    const adminCollection = client.db("fourteenFortyMinutesNews").collection("admins");
     
 
-
-    console.log('database connected')
 
     app.post('/addAnArticle', (req, res) => {
         const newArticle = req.body;
         articleCollection.insertOne(newArticle)
             .then(result => {
-                console.log(result)
-                res.send(result.insertedCount > 0)
+                res.send(result.acknowledged)
             })
-
-
     })
+
+
+    app.post('/makeAnAdmin', (req, res) => {
+        const newAdmin = req.body;
+        adminCollection.insertOne(newAdmin)
+            .then(result => {
+                res.send(result.acknowledged)
+            })
+    })
+
+
+    app.post('/isAdmin', (req, res) => {
+        const email = req.body.email;
+        console.log(email)
+        adminCollection.find({ email: email })
+            .toArray((err, admins) => {
+                console.log(admins.length)
+                res.send(admins.length > 0);
+            })
+    })
+
+
 
     app.get('/articleDetails/:id',(req,res)=>{
         articleCollection.find({ _id:ObjectId(req.params.id) })
@@ -50,6 +68,7 @@ client.connect(err => {
         articleCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents);
+                console.log(err)
             })
     });
 
