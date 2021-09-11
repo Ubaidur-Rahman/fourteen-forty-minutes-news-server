@@ -36,6 +36,16 @@ client.connect(err => {
 
     })
 
+    app.get('/articleDetails/:id',(req,res)=>{
+        articleCollection.find({ _id:ObjectId(req.params.id) })
+          .toArray((err, documents) => {
+            res.send(documents[0])
+            console.log(err, documents)
+      })
+      
+      })
+
+
     app.get('/articles', (req, res) => {
         articleCollection.find({})
             .toArray((err, documents) => {
@@ -43,9 +53,9 @@ client.connect(err => {
             })
     });
 
-    app.get('/article', (req, res) => {
-        console.log("category", req.query.category);
-        articleCollection.find({category: req.query.category})
+    app.get('/articles/:category', (req, res) => {
+        console.log("category", req.params.category);
+        articleCollection.find({category: req.params.category})
         .toArray((err, documents) => {
             console.log(documents)
           res.send(documents);
